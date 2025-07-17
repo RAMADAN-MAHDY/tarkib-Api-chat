@@ -18,7 +18,7 @@ const port = 5000;
 
 // إعداد CORS
 const options = {
-    origin: "*", // ✅ السماح بالوصول من هذا النطاق
+    origin: "https://nazafaa.com", // ✅ السماح بالوصول من هذا النطاق
     credentials: true, // ✅ السماح بالكوكيز
 };
 app.use(cors(options));
