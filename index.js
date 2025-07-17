@@ -35,7 +35,9 @@ app.use("/analyze", analyzeRoutes); // ✅ استخدام راوتر التحل�
 app.use("/users", getusers); // ✅ استخدام راوتر جلب المستخدمين
 app.use("/DELETusers", deleteUser); // ✅ استخدام راوتر حذف المستخدمين
 
-
+app.get("/", (req, res) => {
+    res.send("API is running...");
+});
 
 
 app.listen(port, () => {
