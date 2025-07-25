@@ -27,25 +27,18 @@ router.post("/", async (req, res) => {
   // ✅ التحقق من وجود التوكن وتحليله
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const incomingToken = authHeader.split(" ")[1];
-    console.log("🔑 Incoming Token:", incomingToken);
-  
     try {
       const decoded = verifyToken(incomingToken);
-      console.log("✅ Decoded Token:", decoded);
       sessionId = decoded.sessionId;
       token = incomingToken;
     } catch (err) {
-      console.warn("⚠️ توكن غير صالح، سيتم إنشاء جلسة جديدة");
-      sessionId = crypto.randomUUID();
-      token = generateToken({ sessionId });
+      return res.status(401).json({ error: "توكن غير صالح" });
     }
   } else {
-    console.log("ℹ️ لا يوجد Authorization Header، سيتم إنشاء جلسة جديدة");
+    // ✅ لو مفيش توكن، نولّد واحد جديد
     sessionId = crypto.randomUUID();
     token = generateToken({ sessionId });
   }
-  
-  
 
   try {
     // البحث عن الجلسة بالتوكن (اللي فيه sessionId)
