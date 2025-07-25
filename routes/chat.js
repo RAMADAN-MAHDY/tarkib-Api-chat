@@ -32,13 +32,17 @@ router.post("/", async (req, res) => {
       sessionId = decoded.sessionId;
       token = incomingToken;
     } catch (err) {
-      return res.status(401).json({ error: "توكن غير صالح" });
+      // لو التوكن موجود لكنه غير صالح
+      console.warn("توكن غير صالح، سيتم إنشاء جلسة جديدة");
+      sessionId = crypto.randomUUID();
+      token = generateToken({ sessionId });
     }
   } else {
-    // ✅ لو مفيش توكن، نولّد واحد جديد
+    // مفيش توكن خالص
     sessionId = crypto.randomUUID();
     token = generateToken({ sessionId });
   }
+  
 
   try {
     // البحث عن الجلسة بالتوكن (اللي فيه sessionId)
