@@ -44,6 +44,7 @@
    ```bash
    git clone <REPO_URL>
    cd khajAPI
+```
 ````
 
 2. **إعداد المتغيرات البيئية:**
