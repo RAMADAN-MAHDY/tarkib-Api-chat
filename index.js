@@ -7,6 +7,7 @@ import getusers from "./routes/GET/getusers.js";
 import deleteUser from "./routes/DELETE/deleteUser.js";
 import clickController from './routes/post/clickRoutes.js'
 import cors from "cors";
+import securityMiddleware from './middleware/securityMiddleware.js'
 // تحميل المتغيرات البيئية
 dotenv.config();
 
@@ -26,7 +27,7 @@ app.use(cors(options));
 
 
 connectDB(); // ✅ الاتصال بقاعدة البيانات
-
+securityMiddleware(app) ;// 
 app.use(express.json());
 
 
@@ -35,7 +36,7 @@ app.use("/chat", chatRoutes); // ✅ استخدام راوتر الدردشة
 app.use("/analyze", analyzeRoutes); // ✅ استخدام راوتر التحليل
 app.use("/users", getusers); // ✅ استخدام راوتر جلب المستخدمين
 app.use("/DELETusers", deleteUser); // ✅ استخدام راوتر حذف المستخدمين
-app.use("/api" , clickController)
+app.use("/api" , clickController) 
 app.get("/", (req, res) => {
     res.send("API is running...");
 });
