@@ -36,7 +36,7 @@ const securityMiddleware = (app) => {
 
     // منع XSS
     app.use(xss());
-
+    app.set('trust proxy', 1);
     // تحديد معدل الطلبات
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000,
