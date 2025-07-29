@@ -1,6 +1,5 @@
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import xss from 'xss-clean';
 import sanitize from 'mongo-sanitize';
 
 const securityMiddleware = (app) => {
@@ -14,9 +13,6 @@ const securityMiddleware = (app) => {
 
   // 🛡️ Secure headers
   app.use(helmet());
-
-  // 🧼 Prevent XSS
-  app.use(xss());
 
   // 📈 Rate limiting
   app.set('trust proxy', 1);
