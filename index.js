@@ -25,8 +25,8 @@ app.use(cors(options));
 
 
 connectDB(); // ✅ الاتصال بقاعدة البيانات
-securityMiddleware(app) ; // ✅ استخدام محركات الحماية
 app.use(express.json());
+securityMiddleware(app) ; // ✅ استخدام محركات الحماية
 
 
 // ✅ استخدام الراوتر
