@@ -1,14 +1,14 @@
 import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import xss from 'xss-clean';
+import sanitize from 'mongo-sanitize';
 
 const securityMiddleware = (app) => {
   // ✅ Sanitizing manually without modifying read-only req.*
   app.use((req, res, next) => {
-    req.clonedQuery = mongoSanitize.sanitize({ ...req.query });
-    req.clonedBody = mongoSanitize.sanitize({ ...req.body });
-    req.clonedParams = mongoSanitize.sanitize({ ...req.params });
+    req.clonedQuery = sanitize({ ...req.query });
+    req.clonedBody = sanitize({ ...req.body });
+    req.clonedParams = sanitize({ ...req.params });
     next();
   });
 
