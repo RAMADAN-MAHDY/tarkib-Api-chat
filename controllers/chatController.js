@@ -10,7 +10,7 @@ const openai = new OpenAI({
 
 
 const  ChatController =  async (req, res) => {
-    const { message } = req.body;
+    const { message } = req.clonedBody;
 
     const sessionId = req.sessionId; // جاي من الميدل وير
     const token = req.token; // جاي من الميدل وير

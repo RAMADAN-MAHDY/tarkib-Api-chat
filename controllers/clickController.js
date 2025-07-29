@@ -1,7 +1,7 @@
 import ClickCounter from '../models/ClickCounter.js';
 
 export const handleButtonClick = async (req, res) => {
-  const { buttonId } = req.body;
+  const { buttonId } = req.clonedBody;
 
   if (!buttonId) {
     return res.status(400).json({ success: false, message: 'buttonId is required' });

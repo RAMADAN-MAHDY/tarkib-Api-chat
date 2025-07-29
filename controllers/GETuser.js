@@ -16,7 +16,7 @@ const GETusers  = async (req, res) => {
 
 
   const GETuserById = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.clonedParams;
   
     try {
       const user = await UserRequest.findById(id);
