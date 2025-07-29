@@ -6,28 +6,12 @@ import xss from 'xss-clean';
 const securityMiddleware = (app) => {
     // ✅ نسخ البيانات دون التعديل على req.query مباشرة
     app.use((req, res, next) => {
-        const clone = (obj) => obj && typeof obj === 'object' ? { ...obj } : {};
-        Object.defineProperty(req, 'query', {
-            value: clone(req.query),
-            writable: true,
-            configurable: true,
-            enumerable: true
-        });
-        Object.defineProperty(req, 'body', {
-            value: clone(req.body),
-            writable: true,
-            configurable: true,
-            enumerable: true
-        });
-        Object.defineProperty(req, 'params', {
-            value: clone(req.params),
-            writable: true,
-            configurable: true,
-            enumerable: true
-        });
+        req.clonedQuery = { ...req.query };
+        req.clonedBody = { ...req.body };
+        req.clonedParams = { ...req.params };
         next();
     });
-
+    
     // 🛡️ منع NoSQL injection
     app.use(mongoSanitize());
 

@@ -15,8 +15,6 @@ dotenv.config();
 
 const app = express();
 const port = 5000;
-// app.set('trust proxy', 1);
-
 
 // إعداد CORS
 const options = {
@@ -27,7 +25,7 @@ app.use(cors(options));
 
 
 connectDB(); // ✅ الاتصال بقاعدة البيانات
-securityMiddleware(app) ;// 
+securityMiddleware(app) ; // ✅ استخدام محركات الحماية
 app.use(express.json());
 
 
