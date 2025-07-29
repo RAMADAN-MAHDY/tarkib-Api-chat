@@ -6,11 +6,11 @@ import xss from 'xss-clean';
 const securityMiddleware = (app) => {
     // ✅ نسخ البيانات دون التعديل على req.query مباشرة
     app.use((req, res, next) => {
-        req.clonedQuery = { ...req.query };
-        req.clonedBody = { ...req.body };
-        req.clonedParams = { ...req.params };
+        req.clonedQuery = mongoSanitize.sanitize({ ...req.query });
+        req.clonedBody = mongoSanitize.sanitize({ ...req.body });
+        req.clonedParams = mongoSanitize.sanitize({ ...req.params });
         next();
-    });
+      });
     
     // 🛡️ منع NoSQL injection
     app.use(mongoSanitize());
