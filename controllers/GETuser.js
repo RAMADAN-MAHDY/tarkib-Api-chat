@@ -17,6 +17,11 @@ const GETusers  = async (req, res) => {
 
   const GETuserById = async (req, res) => {
     const { id } = req.clonedParams;
+    if (!id) {
+      return res.status(400).json({ error: "ID المستخدم مطلوب" , id  });
+    }
+
+    console.log("جلب تفاصيل المستخدم ID:", id);
   
     try {
       const user = await UserRequest.findById(id);
