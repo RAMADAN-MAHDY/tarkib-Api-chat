@@ -1,7 +1,7 @@
 import UserRequest from '../models/UserRequest.js';
 
  const HandleDeleteUsere = async (req, res) => {
-    const { id } = req.clonedParams;
+    const { id } = req.params;
   
     try {
       const deleted = await UserRequest.findByIdAndDelete(id);

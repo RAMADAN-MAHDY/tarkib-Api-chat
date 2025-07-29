@@ -16,7 +16,7 @@ const GETusers  = async (req, res) => {
 
 
   const GETuserById = async (req, res) => {
-    const { id } = req.clonedParams;
+    const { id } = req.params;
     if (!id) {
       return res.status(400).json({ error: "ID المستخدم مطلوب" , id  });
     }
@@ -38,4 +38,3 @@ const GETusers  = async (req, res) => {
   };
 
   export {GETusers , GETuserById};
-  
