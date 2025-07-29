@@ -3,23 +3,30 @@ import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import xss from 'xss-clean';
 
-const securityMiddleware = (app) =>{
+const securityMiddleware = (app) => {
+    // ✅ نسخ الكائنات لجعلها قابلة للتعديل
+    app.use((req, res, next) => {
+        req.query = { ...req.query };
+        req.body = req.body ? { ...req.body } : {};
+        req.params = req.params ? { ...req.params } : {};
+        next();
+    });
 
-    // Data sanitization against NoSQL query injection
+    // 🛡️ منع هجمات NoSQL Injection
     app.use(mongoSanitize());
 
-    // Set security HTTP headers
+    // 🧱 ترويسات الحماية
     app.use(helmet());
 
-    // Prevent XSS attacks
-    app.use(xss());         
+    // ❌ منع XSS
+    app.use(xss());
 
-    // Rate limiting
+    // 🕓 تحديد عدد الطلبات
     const limiter = rateLimit({
-        windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100 // limit each IP to 100 requests per windowMs
-
-    })
+        windowMs: 15 * 60 * 1000,
+        max: 100,
+    });
     app.use(limiter);
-}
+};
+
 export default securityMiddleware;
