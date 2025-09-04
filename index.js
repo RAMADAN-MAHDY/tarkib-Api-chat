@@ -18,7 +18,7 @@ const port = 5000;
 
 // إعداد CORS
 const options = {
-    origin: ["https://nazafaa.com" , "http://localhost:3000"], // ✅ السماح بالوصول من هذا النطاق
+    origin: ["https://tarkib-front-end.vercel.app" , "http://localhost:3000"], // ✅ السماح بالوصول من هذا النطاق
     credentials: true, // ✅ السماح بالكوكيز
 };
 app.use(cors(options));
