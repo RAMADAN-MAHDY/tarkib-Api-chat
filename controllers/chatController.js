@@ -9,7 +9,7 @@ const openai = new OpenAI({
 });
 
 
-const  ChatController =  async (req, res) => {
+const ChatController = async (req, res) => {
     const { message } = req.clonedBody;
 
     const sessionId = req.sessionId; // جاي من الميدل وير
@@ -72,7 +72,7 @@ const  ChatController =  async (req, res) => {
             return res.json({
                 reply: `هلا فيك! 😊  في شركة تراكيب للاثاث والديكورات الحديثه
 🕘 الأوقات: من 9 صباحًا إلى 11 مساء  
-💬 اكتب لي نوع الخدمة أو استفسارك، وأنا حاضر أخدمك 😄`,
+💬 اكتب لي نوع الخدمة أو استفسارك، وأنا حاضر أخدمك `,
                 token,
             });
         }
@@ -99,8 +99,8 @@ const  ChatController =  async (req, res) => {
         res.json({ reply, token });
     } catch (error) {
         console.error("❌ خطأ في استدعاء GPT:", error);
-        res.status(500).json({ error: "حدث خطأ داخلي" });
+        res.status(500).json({ error: "حدث خطأ داخلي" , details: error.message});
     }
 }
 
-export default ChatController ;
+export default ChatController;
