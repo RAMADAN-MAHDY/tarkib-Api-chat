@@ -1,27 +1,24 @@
-import OpenAI from "openai";
 import dotenv from "dotenv";
 import UserRequest from "../models/UserRequest.js";
+import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
+const ai = new GoogleGenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const ChatController = async (req, res) => {
     const { message } = req.clonedBody;
-
-    const sessionId = req.sessionId; // جاي من الميدل وير
-    const token = req.token; // جاي من الميدل وير
-
+    const sessionId = req.sessionId;
+    const token = req.token;
 
     if (!message) {
         return res.status(400).json({ error: "الرسالة مطلوبة" });
     }
+    if (message === "ابدأ") {
+        return res.status(200).json({ reply: "✨ اهلا 👋 محتاج اي مساعده ", token });
+    }
 
     try {
-        // البحث عن الجلسة بالتوكن (اللي فيه sessionId)
         let userSession = await UserRequest.findOne({ sessionId });
 
         if (!userSession) {
@@ -29,7 +26,7 @@ const ChatController = async (req, res) => {
                 sessionId,
                 chatHistory: [
                     {
-                        role: "system",
+                        role: "user",
                         content: `
 أنت مساعد ذكي لشركه تراكيب متخصصه في الاثاث والديكورات لديك المعلومات التالية:
 
@@ -64,33 +61,58 @@ const ChatController = async (req, res) => {
 - لا تدمج النقاط كلها في سطر واحد 
 - اجعل كل فقرة واضحة ومقسمة بشكل سهل القراءة. 
 `.trim(),
+
                     },
                 ],
             });
 
-            // ✅ أول مرة فقط: ارجع رد ترحيبي ثابت بدون استدعاء GPT
             return res.json({
-                reply: `هلا فيك! 😊  في شركة تراكيب للاثاث والديكورات الحديثه
-🕘 الأوقات: من 9 صباحًا إلى 11 مساء  
-💬 اكتب لي نوع الخدمة أو استفسارك، وأنا حاضر أخدمك `,
+                reply: `
+اهلا بيك  ! 👋
+انا مساعدك بالذكاء الاصطناعي لمؤسسة تراكيب للاثاث والديكورات
+    `,
                 token,
             });
         }
 
-        // ✅ باقي الجلسات: نكمل التفاعل مع GPT
+        // ✨ تحديث التاريخ
         userSession.chatHistory.push({ role: "user", content: message });
 
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: userSession.chatHistory.slice(-20),
-            max_tokens: 500,
-            temperature: 0.7,
+        // ✨ تحويل history لصيغة Gemini
+        const formattedHistory = userSession.chatHistory.slice(-20).map(msg => ({
+            role:
+                msg.role === "assistant"
+                    ? "model"
+                    : msg.role === "system"
+                        ? "user" // ✨ أي system تتحول لـ user
+                        : msg.role, // أي user يفضل user
+            parts: [{ text: msg.content }],
+        }));
+
+        // ✨ استدعاء Gemini
+        const completion = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: formattedHistory,
+            generationConfig: {
+                maxOutputTokens: 200
+            }
         });
 
-        const reply = completion.choices[0]?.message?.content;
+        let reply = completion.text || "";
 
         if (!reply) {
-            return res.status(500).json({ error: "ما قدرنا نرجع رد من المساعد" });
+            return res.status(500).json({ error: "ما قدرناش نرجع رد من المساعد" });
+        }
+        const stopSequences = ["END"]; // ممكن تزود هنا اللي انت عايزه
+        for (const stop of stopSequences) {
+            if (reply.includes(stop)) {
+                reply = reply.split(stop)[0].trim();
+                break;
+            }
+        }
+
+        if (!reply) {
+            return res.status(500).json({ error: "ما قدرناش نرجع رد من المساعد" });
         }
 
         userSession.chatHistory.push({ role: "assistant", content: reply });
@@ -98,9 +120,9 @@ const ChatController = async (req, res) => {
 
         res.json({ reply, token });
     } catch (error) {
-        console.error("❌ خطأ في استدعاء GPT:", error);
-        res.status(500).json({ error: "حدث خطأ داخلي" , details: error.message});
+        console.error("❌ خطأ في استدعاء gemini:", error);
+        res.status(500).json({ error: "حدث خطأ داخلي" });
     }
-}
+};
 
 export default ChatController;
