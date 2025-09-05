@@ -1,13 +1,12 @@
-import OpenAI from "openai";
+// import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
+
 import dotenv from "dotenv";
 import UserRequest from "../models/UserRequest.js";
 
 dotenv.config();
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
+const ai = new GoogleGenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const analizeController = async (req, res) => {
 
@@ -69,21 +68,16 @@ ${formattedChat}
 `;
 
     try {
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-                {
-                    role: "system",
-                    content: "أنت مساعد تستخرج بيانات الحجز من المحادثة بصيغة JSON فقط.",
-                },
-                {
-                    role: "user",
-                    content: prompt,
-                },
-            ],
+          // ✨ استدعاء Gemini
+        const completion = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            generationConfig: {
+                maxOutputTokens: 200
+            }
         });
 
-        const aiResponse = completion.choices[0].message.content.trim();
+        const aiResponse = completion.text || "";
         const cleaned = aiResponse.replace(/```json|```/g, "");
 
         let parsed;
