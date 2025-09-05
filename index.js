@@ -1,12 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import chatRoutes from "./routes/chat.js";
+import adminRoutes from "./routes/admin.js";
 import connectDB from "./db.js";
 import analyzeRoutes from "./routes/analyze.js";
 import getusers from "./routes/GET/getusers.js";
 import deleteUser from "./routes/DELETE/deleteUser.js";
 import clickController from './routes/post/clickRoutes.js'
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import securityMiddleware from './middleware/securityMiddleware.js'
 // تحميل المتغيرات البيئية
 dotenv.config();
@@ -26,6 +28,7 @@ app.use(cors(options));
 
 connectDB(); // ✅ الاتصال بقاعدة البيانات
 app.use(express.json());
+app.use(cookieParser());
 securityMiddleware(app) ; // ✅ استخدام محركات الحماية
 
 
@@ -35,6 +38,7 @@ app.use("/analyze", analyzeRoutes); // ✅ استخدام راوتر التحل�
 app.use("/users", getusers); // ✅ استخدام راوتر جلب المستخدمين
 app.use("/DELETusers", deleteUser); // ✅ استخدام راوتر حذف المستخدمين
 app.use("/api" , clickController) 
+app.use("/admin", adminRoutes);
 app.get("/", (req, res) => {
     res.send("API is running...");
 });
